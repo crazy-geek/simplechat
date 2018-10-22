@@ -11,7 +11,13 @@ const io = socketIO(server)
 app.use(express.static(path.join(__dirname,'../public')))
 
 io.on('connection', (socket) => {
-    console.log('new user connected')
+    console.log('Client connected..')
+    socket.on('sendMessage', (data)=>{
+        //console.log('data received' + data)
+        io.emit('receiveMessage',{from:'user', msg:data.msg, createdAt: new Date().getTime()})
+    })
+
+
 
     socket.on('disconnect', () =>{
         console.log('Client Disconnected')
