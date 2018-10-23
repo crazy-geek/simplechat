@@ -17,7 +17,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('stream',function(image){
-        socket.emit('stream',image);  
+        socket.broadcast.emit('stream',image);  
     });
 
     socket.on('disconnect', () =>{
