@@ -5,6 +5,7 @@
     </head>
     <body>
         <p>Welcome to Chat client</p>
+        <div id="logger"></div>
         <div>
             <div id='msgSec'>
                 <ul id='msgs'></ul>
@@ -13,8 +14,65 @@
                 <input type="text" id='txtMsg'>
                 <button onclick="return sendMessage()">Send Message</button>
             </form>
+            <div>
+                    <img style="width:300px; height: 300px;" id="play">
+                    
+            </div>
+            <div>
+                <p>Your Camera</p>
+                <video src="" id="video" style="width:300px; height: 300px;" autoplay="true"></video>
+                <canvas style="display:none;" id="preview"></canvas>
+                <!-- <div id="logger"></div> -->
+            </div>
+            
         </div>
+        <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src='/socket.io/socket.io.js'></script>
         <script src='/js/index.js'></script>
+        <script>
+          var canvas = document.getElementById("preview");
+    var context = canvas.getContext('2d');
+ 
+    canvas.width = 900;
+    canvas.height = 700;
+ 
+    context.width = canvas.width;
+    context.height = canvas.height;
+ 
+    var video = document.getElementById("video");
+ 
+    //var socket = io();
+ 
+    function logger(msg){
+        $('#logger').text(msg);
+    }
+ 
+    function loadCamera(stream){
+        video.src = window.URL.createObjectURL(stream);
+        logger("Camera connected");
+    }
+ 
+    function loadFail(){
+        logger("Camera not connected");
+    }
+ 
+    function viewVideo(video,context){
+        context.drawImage(video,0,0,context.width,context.height);
+        socket.emit('stream',canvas.toDataURL('image/webp'));
+    }
+ 
+    $(function(){
+        navigator.getUserMedia = ( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msgGetUserMedia );
+    
+        if(navigator.getUserMedia){
+            navigator.getUserMedia({video: true, audio: false},loadCamera,loadFail);
+        }
+ 
+        setInterval(function(){
+            viewVideo(video,context);
+        },5);
+    });
+        
+        </script>
     </body>
 </html>

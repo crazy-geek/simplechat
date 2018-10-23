@@ -16,9 +16,16 @@ io.on('connection', (socket) => {
         io.emit('receiveMessage',{from: 'user', msg: data.msg, createdAt: new Date().getTime()})
     })
 
+    socket.on('stream',function(image){
+        socket.emit('stream',image);  
+    });
+
     socket.on('disconnect', () =>{
         console.log('Client Disconnected')
     })
+
+   
+
 })
 let port = process.env.PORT || 3000
 server.listen(port,()=>{

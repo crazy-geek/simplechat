@@ -16,6 +16,11 @@ socket.on('disconnect', ()=> {
     console.log('Server Disconnected')
 })
 
+socket.on('stream',function(image){
+    $('#play').attr('src',image);
+    $('#logger').text(image);
+});
+
 let sendMessage = function (){
     event.preventDefault()
     let msgTextVal = document.getElementById('txtMsg').value;
@@ -26,3 +31,4 @@ let receiveMessage = function (data){
     let elem = `<li> ${data.from}: ${data.msg} </li>`
     document.getElementById('msgs').innerHTML += elem;
 }
+
