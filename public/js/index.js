@@ -23,8 +23,12 @@ socket.on('stream',function(image){
 
 let sendMessage = function (){
     event.preventDefault()
+
     let msgTextVal = document.getElementById('txtMsg').value;
+    if(msgTextVal == '')
+        return;
     socket.emit('sendMessage', {from:'user', msg:msgTextVal})
+    document.getElementById('txtMsg').value = ''
     
 }
 let receiveMessage = function (data){

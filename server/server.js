@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname,'../public')))
 io.on('connection', (socket) => {
     console.log('Client connected..')
     socket.on('sendMessage', (data)=>{
-        io.emit('receiveMessage',{from: 'user', msg: data.msg, createdAt: new Date().getTime()})
+        socket.emit('receiveMessage',{from: 'user', msg: data.msg, createdAt: new Date().getTime()})
     })
 
     socket.on('stream',function(image){
