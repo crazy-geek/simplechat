@@ -3,7 +3,13 @@ const http = require('http');
 const socketIO = require('socket.io');
 const port = process.env.PORT || 3000;
 
-var fileServer = new(nodeStatic.Server)();
+var fileServer = new nodeStatic.Server({
+  headers:{
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  }
+});
 var app = http.createServer(function(req, res) {
   fileServer.serve(req, res);
 }).listen(port, ()=>{
