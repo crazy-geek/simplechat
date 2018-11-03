@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>my chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h3>Welcome to my Chat</h3>
+
+    <video style="width:200px;height:150px" muted autoplay  id='video'></video>
+    <audio id='saudio' muted></audio>
+    <video style="width:200px;height:150px"   id='tvideo'></video>
+    <audio id='taudio'></audio>
+
+
+    <button onclick="openCamera()">Open Camera</button>
+    <button onclick="startStreaming()">Start Streaming</button>
+    <script src = '/socket.io/socket.io.js'></script>
+ 
+    <script>
+        let socket = io();
+        let stream;
+        let audStream;
+        let mimeCodec = 'video/webm; codecs=vp9'
+
+        let openCamera = () => {
+            navigator.mediaDevices.getUserMedia({ video: true, audio:false })
+                .then(mediaStream => {
+                    stream = mediaStream
+                    document.querySelector('video').srcObject = stream;
+                })
+
+            navigator.mediaDevices.getUserMedia({ video: false, audio:true })
+                .then(audioStream => {
+                    audStream = audioStream
+                    //document.getElementById('saudio').srcObject = audStream;
+                })
+        }
+
+        let startStreaming = () => {
+            let mediaRecorder = new MediaRecorder(stream, {
+                mimeType: mimeCodec
+            });
+            let audioRecorder = new MediaRecorder(audStream, {
+                mimeType: mimeCodec
+            })
+            mediaRecorder.start(1024);
+            audioRecorder.start(1024);
+
+            mediaRecorder.ondataavailable = e => {
+                socket.emit('recording', e.data);
+            }
+            audioRecorder.ondataavailable = e => {
+                socket.emit('audiorecording', e.data);
+            }
+
+
+        }
+        let targetVidPlayer = document.getElementById('tvideo');
+        let targetAudPlayer = document.getElementById('taudio')
+        let ms = new MediaSource()  
+        let aud_ms = new MediaSource()
+
+        targetVidPlayer.src = URL.createObjectURL(ms);
+        targetAudPlayer.src = URL.createObjectURL(aud_ms);
+
+        ms.addEventListener('sourceopen', sourceOpen)
+        aud_ms.addEventListener('sourceopen', audSourceOpen)
+        // socket.on('playing', (vstream) => {
+        //     //console.log(vstream)
+        //     targetVidPlayer.srcObject = ms(vstream)
+        // })
+
+
+        function sourceOpen(_) {
+                var mediaSource = this;
+                var sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+                socket.on('playing', function (buf) {
+                    let arr = new Uint8Array(buf)
+                    sourceBuffer.appendBuffer(arr);
+                    targetVidPlayer.play()
+                        //playpromise = targetVidPlayer.play();
+                        //console.log(mediaSource.readyState); // ended
+                    });
+            };
+
+        let audContext = new AudioContext();
+        function audSourceOpen(_) {
+            var mediaSource = this;
+            var sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+                    socket.on('audplaying', function (buf) {
+                        //let source = audContext.createMediaStreamSource(buf)
+                        let arr = new Uint8Array(buf)
+                        sourceBuffer.appendBuffer(arr);
+                        targetAudPlayer.play()
+                            //playpromise = targetVidPlayer.play();
+                            //console.log(mediaSource.readyState); // ended
+                    });
+                
+            };
+    </script>
+  
+</body>
+</html>
