@@ -1,7 +1,11 @@
 const nodeStatic = require('node-static');
+const axios = require('axios');
 const http = require('http');
 const socketIO = require('socket.io');
 const port = process.env.PORT || 3000;
+
+const TURN_URL = 'https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913';
+
 
 var fileServer = new nodeStatic.Server({
   headers:{
@@ -41,6 +45,16 @@ io.sockets.on('connect',(socket)=>{
         } else { // max two clients
           socket.emit('full', room);
         }
+    });
+
+    socket.on('GET_TURN_SERVER', () => {
+      axios.get (TURN_URL)
+        .then(resp => {
+          console.log(reps)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     });
 
 

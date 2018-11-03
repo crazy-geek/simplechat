@@ -1,5 +1,5 @@
 'use strict';
-const TURN_URL = 'https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913';
+const TURN_URL = 'turn:numb.viagenie.ca?username=41784574&key=4080218913';
 
 var isChannelReady = false;
 var isInitiator = false;
@@ -11,7 +11,11 @@ var turnReady;
 
 var pcConfig = {
   'iceServers': [{
-    'urls': 'stun:stun.l.google.com:19302'
+    'urls': [
+          {'url':'stun:stun.l.google.com:19302'},
+          {'url': 'turn:YzYNCouZM1mhqhmseWk6@13.250.13.83:3478?transport=udp','credential': 'YzYNCouZM1mhqhmseWk6'}
+        ],
+    
   }]
 };
 
@@ -200,32 +204,36 @@ socket.on('created', function(room) {
   };
 
   function requestTurn(turnURL) {
-    var turnExists = false;
-    for (var i in pcConfig.iceServers) {
-      if (pcConfig.iceServers[i].urls.substr(0, 5) === 'turn:') {
-        turnExists = true;
-        turnReady = true;
-        break;
-      }
-    }
-    if (!turnExists) {
+      turnExists = true;
+      turnReady = true;
+    // socket.emit('GET_TURN_SERVER');
+    // var turnExists = false;
+    // for (var i in pcConfig.iceServers) {
+    //   if (pcConfig.iceServers[i].urls.substr(0, 5) === 'turn:') {
+    //     turnExists = true;
+    //     turnReady = true;
+    //     break;
+    //   }
+    // }
+    // if (!turnExists) {
       console.log('Getting TURN server from ', turnURL);
+      //socket.emit('GET_TURN_SERVER');
       // No TURN server. Get one from computeengineondemand.appspot.com:
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var turnServer = JSON.parse(xhr.responseText);
-          console.log('Got TURN server: ', turnServer);
-          pcConfig.iceServers.push({
-            'urls': 'turn:' + turnServer.username + '@' + turnServer.turn,
-            'credential': turnServer.password
-          });
-          turnReady = true;
-        }
-      };
-      xhr.open('GET', turnURL, true);
-      xhr.send();
-    }
+      // var xhr = new XMLHttpRequest();
+      // xhr.onreadystatechange = function() {
+      //   if (xhr.readyState === 4 && xhr.status === 200) {
+      //     var turnServer = JSON.parse(xhr.responseText);
+      //     console.log('Got TURN server: ', turnServer);
+      //     pcConfig.iceServers.push({
+      //       'urls': 'turn:' + turnServer.username + '@' + turnServer.turn,
+      //       'credential': turnServer.password
+      //     });
+      //     turnReady = true;
+      //   }
+      // };
+      // xhr.open('GET', turnURL, true);
+      // xhr.send();
+    //}
   };
 
   function stop() {
