@@ -31,7 +31,7 @@ let endBtn = document.getElementById('hangupButton');
 
 callBtn.disabled = true;
 endBtn.disabled = true;
-onStartVideoChat()
+
 //startBtn.addEventListener('click', onStartVideoChat);
 //callBtn.addEventListener('click', onStartStreaming);
 endBtn.addEventListener('click', handleRemoteHangup);
@@ -44,7 +44,7 @@ if (location.hostname !== 'localhost') {
 pc = new RTCPeerConnection(null);
 let room = prompt('Enter a room name to Join','Private')
 CreateOrJoinRoom(room)
-
+onStartVideoChat()
 function onStartVideoChat(){
   console.log('streaming started')
     navigator.mediaDevices.getUserMedia({
@@ -84,8 +84,6 @@ socket.on('created', function(room) {
   });
   
   socket.on('join', function (room){
-    console.log('Another peer made a request to join room ' + room);
-    console.log('This peer is the initiator of room ' + room + '!');
     isChannelReady = true;
   });
 

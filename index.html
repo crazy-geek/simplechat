@@ -4,16 +4,33 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Page Title</title>
-
+    <style>
+        .local_video{
+            width:85px;
+            height:85px;
+            float:left;
+            vertical-align: top;
+        }
+        .remote_video{
+            width:100%;
+            height:auto;
+        }
+    </style>
 </head>
 <body>
-    <video autoplay muted id='localvdo' style="width:150px;height:150px"></video>
-    <video autoplay id='remotevdo' style="width:150px;height:150px"></video>
-
+<div height='720px' width='auto' style="background-color:black;">
     <div>
-            <button id="startButton">Start</button>
-            <button id="callButton">Call</button>
-            <button id="hangupButton">Hang Up</button>
+        <video class="remote_video" autoplay id='remotevdo' playsinline></video>
+    </div>
+    <div>
+        <video class="local_video" autoplay muted id='localvdo'></video>
+    </div>
+</div>
+   
+    <div style="float:right;">
+            <button id="startButton" disabled>[00100110]</button>
+            <button id="callButton" disabled>[110011110]]</button>
+            <button id="hangupButton" disabled>[000000001]]</button>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
