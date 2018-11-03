@@ -204,7 +204,7 @@ socket.on('created', function(room) {
   };
 
   function requestTurn(turnURL) {
-      turnExists = true;
+     
       turnReady = true;
     // socket.emit('GET_TURN_SERVER');
     // var turnExists = false;
